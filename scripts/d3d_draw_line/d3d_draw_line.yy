@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"d3d_draw_line",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"d3d_draw_line",
+  "parent":{
+    "name":"Geometry",
+    "path":"folders/Drago3D/Geometry.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

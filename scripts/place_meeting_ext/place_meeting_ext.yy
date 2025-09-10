@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"place_meeting_ext",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"place_meeting_ext",
+  "parent":{
+    "name":"globalInit",
+    "path":"folders/Scripts/globalInit.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

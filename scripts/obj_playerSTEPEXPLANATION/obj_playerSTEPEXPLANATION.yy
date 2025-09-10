@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"obj_playerSTEPEXPLANATION",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"obj_playerSTEPEXPLANATION",
+  "parent":{
+    "name":"OtherSCRs",
+    "path":"folders/Scripts/globalInit/OtherSCRs.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
