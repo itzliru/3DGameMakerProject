@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"cube_collision_check",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"cube_collision_check",
+  "parent":{
+    "name":"CubeHelperScripts",
+    "path":"folders/Scripts/CubeHelperScripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
