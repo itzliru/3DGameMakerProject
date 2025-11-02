@@ -51,5 +51,25 @@ if (keyboard_check_pressed(ord("R"))) {
 }
 
 // --- Save / Load ---
-if (keyboard_check_pressed(ord("M"))) cube_save();
-if (keyboard_check_pressed(ord("L"))) cube_load();
+if (keyboard_check_pressed(ord("M"))) {
+    if (cube_save("world_blocks.json")) {
+        show_debug_message("World saved successfully!");
+    }
+}
+if (keyboard_check_pressed(ord("L"))) {
+    if (cube_load("world_blocks.json")) {
+        show_debug_message("World loaded successfully!");
+    }
+}
+
+// --- Quick Save / Load (Shift + M/L) ---
+if (keyboard_check(vk_shift) && keyboard_check_pressed(ord("M"))) {
+    if (cube_quick_save()) {
+        show_debug_message("Quick save successful!");
+    }
+}
+if (keyboard_check(vk_shift) && keyboard_check_pressed(ord("L"))) {
+    if (cube_quick_load()) {
+        show_debug_message("Quick load successful!");
+    }
+}

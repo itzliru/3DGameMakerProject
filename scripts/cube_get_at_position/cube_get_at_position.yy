@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"cube_get_at_position",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"cube_get_at_position",
+  "parent":{
+    "name":"CubeHelperScripts",
+    "path":"folders/Scripts/CubeHelperScripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

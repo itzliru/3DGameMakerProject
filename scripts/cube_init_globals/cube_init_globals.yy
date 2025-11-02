@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"cube_init_globals",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"cube_init_globals",
+  "parent":{
+    "name":"CubeHelperScripts",
+    "path":"folders/Scripts/CubeHelperScripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

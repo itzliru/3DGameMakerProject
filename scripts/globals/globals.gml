@@ -1,8 +1,13 @@
 
-// Cube data
-//global.cube_mesh = undefined; // will store the cube mesh template
-//global.cube_list = [];        // stores all placed cubes
-//global.grid_size = 64;        // cube size (64x64x64)
+// Cube data - Now initialized via cube_init_globals() function
+// Call cube_init_globals() in obj_builderController or obj_game Create event
+// global.cube_mesh = undefined; // will store the cube mesh template
+// global.cube_list = [];        // stores all placed cubes
+// global.grid_size = 64;        // cube size (64x64x64)
+// global.block_id = 0;          // unique ID counter for blocks
+// global.cube_spatial_hash = ds_map_create(); // fast collision lookups
+// global.block_types = {...};   // block type definitions
+// global.current_block_type = 1; // currently selected block type
 
 player_health = 100;
 global.player_max_health = 100;
