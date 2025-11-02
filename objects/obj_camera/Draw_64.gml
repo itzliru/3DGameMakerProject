@@ -1,10 +1,6 @@
-/// @description Insert description here
-// You can write your code in this editor
-/// @description UI
-// You can write your code in this editor
-draw_text(32, 32, "Heigth: " + string(obj_player.depth) + "/ X " + string(obj_player.x) + "/ Y " + string(obj_player .y));
-surface_format_is_supported(surface_rgba32float)
-/// @description UI
-// You can write your code in this editor
-draw_text(32, 32, "Heigth: " + string(obj_player.depth) + "/ X " + string(obj_player.x) + "/ Y " + string(obj_player.y));
-surface_format_is_supported(surface_rgba32float)
+/// @description Camera UI Overlay
+
+// Draw player position info
+draw_set_color(c_white);
+draw_text(32, 96, "Player Height: " + string(obj_player.z) + " | X: " + string(round(obj_player.x)) + " | Y: " + string(round(obj_player.y)));
+draw_text(32, 112, "Direction: " + string(round(obj_player.direction)) + "° | Pitch: " + string(round(obj_player.pitch)) + "°");

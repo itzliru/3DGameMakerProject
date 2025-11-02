@@ -8,6 +8,9 @@ if (keyboard_check_pressed(vk_f1)) {
 // --- Only works in debug mode ---
 if (!global.debug_mode) exit;
 
+// --- Safety check: exit if player doesn't exist ---
+if (!instance_exists(obj_player)) exit;
+
 // --- Adjust Z plane ---
 if (keyboard_check_pressed(ord("+"))) global.current_z += global.grid_size;
 if (keyboard_check_pressed(ord("-"))) global.current_z -= global.grid_size;

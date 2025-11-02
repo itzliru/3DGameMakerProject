@@ -27,3 +27,6 @@ if (!variable_global_exists("cube_mesh")) {
 global.ghost_x = 0;
 global.ghost_y = 0;
 global.ghost_z = 0;
+
+// Cache shader uniform for performance
+global.u_screen_uniform = shader_get_uniform(sh_ps1_style, "u_ScreenSize");
