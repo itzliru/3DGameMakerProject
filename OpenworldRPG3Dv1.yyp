@@ -60,6 +60,8 @@
     {"id":{"name":"cube_add","path":"scripts/cube_add/cube_add.yy",},},
     {"id":{"name":"cube_collision_check","path":"scripts/cube_collision_check/cube_collision_check.yy",},},
     {"id":{"name":"cube_duplicate","path":"scripts/cube_duplicate/cube_duplicate.yy",},},
+    {"id":{"name":"cube_get_at_position","path":"scripts/cube_get_at_position/cube_get_at_position.yy",},},
+    {"id":{"name":"cube_init_globals","path":"scripts/cube_init_globals/cube_init_globals.yy",},},
     {"id":{"name":"cube_load","path":"scripts/cube_load/cube_load.yy",},},
     {"id":{"name":"cube_remove","path":"scripts/cube_remove/cube_remove.yy",},},
     {"id":{"name":"cube_save","path":"scripts/cube_save/cube_save.yy",},},
