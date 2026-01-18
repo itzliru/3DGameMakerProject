@@ -24,25 +24,45 @@ if (keyboard_check_pressed(ord("P"))) {
 // --- Ghost Cube Position (snap to grid under player feet) ---
 if (global.editing_block) {
     var ghost_dist = 128; // distance in front of player
-    var p = obj_player;
+    var p_inst = instance_exists(obj_player) ? instance_find(obj_player, 0) : noone;
+    if (p_inst != noone) {
+        // Forward vector from player yaw/pitch
+        var dir_x = lengthdir_x(cos(degtorad(p_inst.pitch)), p_inst.direction);
+        var dir_y = lengthdir_y(cos(degtorad(p_inst.pitch)), p_inst.direction);
+        var dir_z = sin(degtorad(p_inst.pitch));
 
-    // Forward vector from player yaw/pitch
-    var dir_x = lengthdir_x(cos(degtorad(p.pitch)), p.direction);
-    var dir_y = lengthdir_y(cos(degtorad(p.pitch)), p.direction);
-    var dir_z = sin(degtorad(p.pitch));
+        var raw_x = p_inst.x + dir_x * ghost_dist;
+        var raw_y = p_inst.y + dir_y * ghost_dist;
+        var raw_z = p_inst.z + dir_z * ghost_dist;
 
-    var raw_x = p.x + dir_x * ghost_dist;
-    var raw_y = p.y + dir_y * ghost_dist;
+        // Safe snap helper (local, deterministic — avoids reading global.snap_to_grid during early init)
+        var _safe_snap = function(a, b, c, mode) {
+            var _gs = variable_global_exists("grid_size") ? global.grid_size : 64;
+            var ax, ay, az;
+            if (is_array(a)) { ax = a[0]; ay = a[1]; az = a[2]; } else { ax = a; ay = b; az = c; }
+            var fn = (argument_count > 3 && mode == "round") ? round : floor;
+            return [ fn(ax / _gs) * _gs, fn(ay / _gs) * _gs, fn(az / _gs) * _gs ];
+        };
 
-    // Snap to grid
-    global.ghost_x = round(raw_x / global.grid_size) * global.grid_size;
-    global.ghost_y = round(raw_y / global.grid_size) * global.grid_size;
-    global.ghost_z = global.current_z; // vertical position adjustable
+        var _snap = _safe_snap([raw_x, raw_y, raw_z], 0, 0, "floor");
+        global.ghost_x = _snap[0];
+        global.ghost_y = _snap[1];
+        global.ghost_z = _snap[2];
+
+        // Check if placement collides
+        global.ghost_blocked = cube_collision_check(global.ghost_x, global.ghost_y, global.ghost_z, global.block_size, global.block_size, global.block_size, par_solid, 0);
+    }
 }
 
 // --- Place block ---
 if (global.editing_block && keyboard_check_pressed(vk_enter)) {
-    cube_add(global.ghost_x, global.ghost_y, global.ghost_z, global.block_size, global.block_collision);
+    if (global.ghost_blocked) {
+        show_debug_message("Placement blocked at " + string(global.ghost_x) + "," + string(global.ghost_y) + "," + string(global.ghost_z));
+    } else {
+        var newid = cube_add(global.ghost_x, global.ghost_y, global.ghost_z, global.block_size, global.block_collision);
+        if (newid == -1) show_debug_message("Failed to place cube (collision).");
+        else show_debug_message("Placed cube id="+string(newid));
+    }
 }
 
 // --- Remove block ---

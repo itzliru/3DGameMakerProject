@@ -2,15 +2,41 @@
 
 // Clear background
 draw_clear(c_black);
-// Start shader
-shader_set(sh_ps1_style);
+// Start postprocess shader for fullscreen blit (safe: fall back if shader resource missing)
+if (variable_global_exists("debug_disable_postprocess") && global.debug_disable_postprocess) {
+    // DEBUG MODE: skip postprocess entirely so we can inspect raw scene
+    if (global.debug_mode) show_debug_message("[DEBUG] Skipping postprocess shader (debug_disable_postprocess=true)");
+} else {
+    var __shader_was_set = false;
+    if (asset_get_index("sh_ps1_post") != -1) {
+        shader_set(sh_ps1_post);
+        __shader_was_set = true;
+        var u_screen = shader_get_uniform(sh_ps1_post, "u_ScreenSize");
+        shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
+    } else if (asset_get_index("sh_ps1_style") != -1) {
+        // fallback to the mesh-capable shader if the postprocess shader isn't present
+        shader_set(sh_ps1_style);
+        __shader_was_set = true;
+        var u_screen = shader_get_uniform(sh_ps1_style, "u_ScreenSize");
+        shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
+    } else {
+        show_debug_message("Warning: no PS1 postprocess shader found (sh_ps1_post/sh_ps1_style) — skipping postprocess");
+    }
 
-// Pass screen size uniform (must be set every frame)
-var u_screen = shader_get_uniform(sh_ps1_style, "u_ScreenSize");
-shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
-
-// Draw the application surface (whole scene) through the shader
+    // Draw the application surface (whole scene) through the postprocess shader
 draw_surface(application_surface, 0, 0);
+
+    // Only reset shader if we set one
+    if (__shader_was_set) shader_reset();
+}
+
+// Debug: log camera & application_surface state when requested
+if (global.debug_mode && global.debug_disable_postprocess) {
+    var cam = camera_get_active();
+    show_debug_message("[DEBUG] camera_active=" + string(cam) + " app_surf_exists=" + string(surface_exists(application_surface)));
+    var matw = matrix_get(matrix_world);
+    show_debug_message("[DEBUG] matrix_world[0..2]=" + string(matw[0]) + "," + string(matw[1]) + "," + string(matw[2]));
+}
 
 // Reset shader
 

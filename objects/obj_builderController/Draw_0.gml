@@ -1,9 +1,21 @@
 /// --- PS1 Shader Pass ---
-shader_set(sh_ps1_style);
-var u_screen = shader_get_uniform(sh_ps1_style, "u_ScreenSize");
-shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
+var __shader_was_set = false;
+if (asset_get_index("sh_ps1_post") != -1) {
+    shader_set(sh_ps1_post);
+    __shader_was_set = true;
+    var u_screen = shader_get_uniform(sh_ps1_post, "u_ScreenSize");
+    shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
+} else if (asset_get_index("sh_ps1_style") != -1) {
+    shader_set(sh_ps1_style);
+    __shader_was_set = true;
+    var u_screen = shader_get_uniform(sh_ps1_style, "u_ScreenSize");
+    shader_set_uniform_f(u_screen, display_get_width(), display_get_height());
+} else {
+    show_debug_message("Warning: no PS1 postprocess shader found (sh_ps1_post/sh_ps1_style) — skipping postprocess");
+}
+
 draw_surface(application_surface, 0, 0);
-shader_reset();
+if (__shader_was_set) shader_reset();
 
 // --- Only draw debug tools in debug mode ---
 if (!global.debug_mode) exit;
@@ -33,26 +45,25 @@ if (global.editing_block) {
     var gy = global.ghost_y;
     var gz = global.ghost_z;
     var s  = global.block_size;
+    var blocked = (variable_global_exists("ghost_blocked") ? global.ghost_blocked : false);
 
-    draw_set_alpha(0.3);
-    draw_set_color(c_aqua);
+    // color: green if placeable, red if blocked
+    draw_set_alpha(0.35);
+    draw_set_color(blocked ? c_red : c_lime);
     d3d_draw_block(gx, gy, gz, gx + s, gy + s, gz + s, -1, 1);
     draw_set_alpha(1);
 
-    // Optional 2D overlay rectangle
-    draw_set_alpha(0.4);
-    draw_set_color(c_aqua);
+    // 2D outline
+    draw_set_color(blocked ? c_maroon : c_green);
     draw_rectangle(gx, gy, gx + s, gy + s, false);
-    draw_set_alpha(1);
 
     // Debug info
-    draw_set_color(c_red);
+    draw_set_color(c_white);
     draw_text(32, 32,
-        "Current Block: ID " + string(global.block_id) +
-        " | Pos: " + string(gx) + "," + string(gy) + "," + string(gz) +
-        " | Size: " + string(s) +
-        " | Collision: " + string(global.block_collision) +
-        " | Grid: ON"
+        "Block ID: " + string(global.block_id) +
+        "  Pos: " + string(gx) + "," + string(gy) + "," + string(gz) +
+        "  Size: " + string(s) +
+        "  Blocked: " + string(blocked)
     );
 }
 
@@ -60,6 +71,10 @@ if (global.editing_block) {
 if (variable_global_exists("cube_list")) {
     for (var i = 0; i < array_length(global.cube_list); i++) {
         var c = global.cube_list[i];
-        d3d_draw_block(c.x, c.y, c.z, c.x + c.size, c.y + c.size, c.z + c.size, -1, 1);
+        if (!is_struct(c)) continue;
+        if (!variable_struct_exists(c, "x") || !variable_struct_exists(c, "y") || !variable_struct_exists(c, "z") || !variable_struct_exists(c, "size")) continue;
+        var cx = c.x; var cy = c.y; var cz = c.z; var cs = c.size;
+        if (!is_real(cx) || !is_real(cy) || !is_real(cz) || !is_real(cs)) continue;
+        d3d_draw_block(cx, cy, cz, cx + cs, cy + cs, cz + cs, -1, 1);
     }
 }

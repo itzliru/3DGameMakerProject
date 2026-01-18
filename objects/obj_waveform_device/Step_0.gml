@@ -1,5 +1,25 @@
 /// Step Event: Update waveform with radius filter
 
+// --- Pickup fallback (distance-based) ---
+if (!held_by_player) {
+    var ply = instance_nearest(x, y, obj_player);
+    if (ply != noone) {
+        var d3 = point_distance_3d(x, y, z, ply.x, ply.y, ply.z);
+        if (d3 <= 48) {
+            if (script_exists(add_device)) {
+                if (add_device(id, ply)) {
+                    if (asset_get_index("snd_pickup") != -1) audio_play_sound(snd_pickup, 1, false);
+                    instance_destroy();
+                    exit;
+                }
+            }
+            // fallback local pickup
+            held_by_player = true;
+            player_ref = ply;
+        }
+    }
+}
+
 // Ensure surface exists
 if (!surface_exists(device_surface)) {
     device_surface = surface_create(screen_w, screen_h);

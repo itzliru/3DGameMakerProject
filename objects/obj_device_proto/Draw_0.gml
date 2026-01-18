@@ -4,17 +4,10 @@
 
 // Draw the sprite in 3D world
 if (!held) {
-    // Billboard: always faces camera
-    var cam = camera_get_active();
-    var cam_x = obj_player.x; // or camera position if separate
-    var cam_y = obj_player.y;
-    var cam_z = obj_player.z;
-
-    var dx = x - cam_x;
-    var dy = y - cam_y;
-
-    var angle_to_cam = point_direction(0, 0, dx, dy);
-    draw_sprite_ext(sprite_index, 0, x, y, 1, 1, angle_to_cam, c_white, 1);
+    // Use the billboard dispatcher (deterministic; will fall back safely)
+    if (asset_get_index("scr_draw_billboard") != -1 || asset_get_index("scr_draw_billboard_simple") != -1) {
+        scr_draw_billboard(sprite_index, x, y, z, 1, 1);
+    }
 }
 var tex = sprite_get_texture(sprite_index, 0);
 d3d_draw_block(

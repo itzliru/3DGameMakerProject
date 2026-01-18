@@ -73,7 +73,6 @@
     {"id":{"name":"d3d_draw_cylinder","path":"scripts/d3d_draw_cylinder/d3d_draw_cylinder.yy",},},
     {"id":{"name":"d3d_draw_ellipsoid_simple","path":"scripts/d3d_draw_ellipsoid_simple/d3d_draw_ellipsoid_simple.yy",},},
     {"id":{"name":"d3d_draw_ellipsoid","path":"scripts/d3d_draw_ellipsoid/d3d_draw_ellipsoid.yy",},},
-    {"id":{"name":"d3d_draw_floor_simple","path":"scripts/d3d_draw_floor_simple/d3d_draw_floor_simple.yy",},},
     {"id":{"name":"d3d_draw_floor","path":"scripts/d3d_draw_floor/d3d_draw_floor.yy",},},
     {"id":{"name":"d3d_draw_line","path":"scripts/d3d_draw_line/d3d_draw_line.yy",},},
     {"id":{"name":"d3d_draw_polyline","path":"scripts/d3d_draw_polyline/d3d_draw_polyline.yy",},},

@@ -49,7 +49,6 @@
     {"name":"d3d_draw_cylinder","order":6,"path":"scripts/d3d_draw_cylinder/d3d_draw_cylinder.yy",},
     {"name":"d3d_draw_ellipsoid_simple","order":9,"path":"scripts/d3d_draw_ellipsoid_simple/d3d_draw_ellipsoid_simple.yy",},
     {"name":"d3d_draw_ellipsoid","order":8,"path":"scripts/d3d_draw_ellipsoid/d3d_draw_ellipsoid.yy",},
-    {"name":"d3d_draw_floor_simple","order":11,"path":"scripts/d3d_draw_floor_simple/d3d_draw_floor_simple.yy",},
     {"name":"d3d_draw_floor","order":10,"path":"scripts/d3d_draw_floor/d3d_draw_floor.yy",},
     {"name":"d3d_draw_line","order":12,"path":"scripts/d3d_draw_line/d3d_draw_line.yy",},
     {"name":"d3d_draw_polyline","order":13,"path":"scripts/d3d_draw_polyline/d3d_draw_polyline.yy",},

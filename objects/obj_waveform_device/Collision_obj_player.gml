@@ -1,9 +1,25 @@
 
-/// Collision Event with obj_player
+/// Collision Event with obj_player (robust 3D proximity pickup)
+var pickup_radius = 48; // world units
+var p = instance_nearest(x, y, obj_player);
+if (p != noone && !held_by_player) {
+    var d3 = point_distance_3d(x, y, z, p.x, p.y, p.z);
+    if (d3 <= pickup_radius) {
+        // Prefer device manager API if present
+        var added = false;
+        if (script_exists(add_device)) {
+            added = add_device(id, p); // add_device handles globals and returns bool
+        }
+        if (!added) {
+            // Fallback: local pickup behaviour
+            held_by_player = true;
+            player_ref = p;
+        }
 
-if (!held_by_player && place_meeting(x, y, obj_player)) {
-    held_by_player = true;
-    trigger_active = true;
-    // Optionally move out of room
-    // x = y = z = -9999;
+        if (added) {
+            // play pickup SFX if available
+            if (asset_get_index("snd_pickup") != -1) audio_play_sound(snd_pickup, 1, false);
+            instance_destroy();
+        }
+    }
 }
