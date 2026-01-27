@@ -126,7 +126,7 @@ function ColLine(start, finish) constructor {
         
         var f = dot_product_3d(d2x, d2y, d2z, rx, ry, rz);
         var c = dot_product_3d(d1x, d1y, d1z, rx, ry, rz);
-        var b = dot_product_3d(d1x, d1y, d1z, d2y, d2z, d2z);
+        var b = dot_product_3d(d1x, d1y, d1z, d2x, d2y, d2z);
         var length_squared = dot_product_3d(d1x, d1y, d1z, d1x, d1y, d1z);
         
         // special case if the line segment is actually just

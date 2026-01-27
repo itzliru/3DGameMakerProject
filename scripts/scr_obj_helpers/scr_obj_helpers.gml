@@ -410,17 +410,24 @@ function import_map(_filename, _opts) {
     if (use_colworld && variable_global_exists("col_world") && !is_undefined(global.col_world)) {
         var shape = undefined;
         if (detailed && array_length(faces) > 0 && is_callable(ColMesh)) {
-            // Build triangle_array suitable for ColMesh (ColTriangle(Vector3,...))
-            var triangle_array = array_create(array_length(faces));
+            // Build triangle_array by pushing only valid triangles (avoid leaving undefined slots)
+            var triangle_array = [];
             for (var i = 0; i < array_length(faces); ++i) {
                 var f = faces[i];
                 var p1 = positions[real(f[0]) - 1];
                 var p2 = positions[real(f[1]) - 1];
                 var p3 = positions[real(f[2]) - 1];
-                triangle_array[i] = new ColTriangle(new Vector3(p1[0], p1[1], p1[2]), new Vector3(p2[0], p2[1], p2[2]), new Vector3(p3[0], p3[1], p3[2]));
+                if (p1 == undefined || p2 == undefined || p3 == undefined) continue; // skip malformed
+                array_push(triangle_array, new ColTriangle(new Vector3(p1[0], p1[1], p1[2]), new Vector3(p2[0], p2[1], p2[2]), new Vector3(p3[0], p3[1], p3[2])));
             }
-            shape = new ColMesh(triangle_array);
-        } else {
+            if (array_length(triangle_array) > 0) {
+                shape = new ColMesh(triangle_array);
+            } else {
+                // no valid triangles collected -> fallback to AABB
+                var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
+                var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
+                shape = new ColAABB(center_v, half);
+            }
             // coarse AABB shape
             var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
             var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
@@ -618,7 +625,7 @@ function import_map_safe(_filename, _opts) {
     if (use_colworld && variable_global_exists("col_world") && !is_undefined(global.col_world)) {
         var shape = undefined;
         try {
-            if (detailed && array_length(faces) > 0 && is_callable(ColMesh)) {
+                var triangle_array = [];
                 for (var i = 0; i < array_length(faces); ++i) {
                     var f = faces[i];
                     var p1 = positions[f[0] - 1];
@@ -629,9 +636,16 @@ function import_map_safe(_filename, _opts) {
                         array_push(errors, "Skipping triangle with missing vertex");
                         continue;
                     }
-                    triangle_array[i] = new ColTriangle(new Vector3(p1[0], p1[1], p1[2]), new Vector3(p2[0], p2[1], p2[2]), new Vector3(p3[0], p3[1], p3[2]));
+                    array_push(triangle_array, new ColTriangle(new Vector3(p1[0], p1[1], p1[2]), new Vector3(p2[0], p2[1], p2[2]), new Vector3(p3[0], p3[1], p3[2])));
                 }
-                shape = new ColMesh(triangle_array);
+                if (array_length(triangle_array) > 0) {
+                    shape = new ColMesh(triangle_array);
+                } else {
+                    // fallback to AABB if no valid triangles
+                    var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
+                    var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
+                    shape = new ColAABB(center_v, half);
+                }
             } else {
                 var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
                 var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
