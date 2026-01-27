@@ -41,7 +41,15 @@ for (var d = step; d <= max_dist; d += step) {
     var sz = p.z + dir_z * d;
 
     var snap = _safe_snap([sx, sy, sz], 0, 0, "floor");
-    if (cube_collision_check(snap[0], snap[1], snap[2], global.block_size, global.block_size, global.block_size, par_solid, 0)) {
+    var _blocked = false;
+    var _blocked_tmp = false;
+    try {
+        _blocked_tmp = cube_collision_check(snap[0], snap[1], snap[2], global.block_size, global.block_size, global.block_size, par_solid, 0);
+    } catch (e) {
+        _blocked_tmp = false;
+    }
+    _blocked = _blocked_tmp;
+    if (_blocked) {
         hit = true;
         break;
     }

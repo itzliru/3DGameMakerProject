@@ -19,7 +19,6 @@ if (global.debug_mode) {
     
     draw_text(20, yy, "World Time: " + string(global.world_time)); yy += 20;
     draw_text(20, yy, "Player Health: " + string(global.player_health) + "/" + string(global.player_max_health)); yy += 20;
-    draw_text(20, yy, "Player Ammo: " + string(global.player_ammo) + "/" + string(global.player_max_ammo)); yy += 20;
 }
 // ==============================
 // Day/Night Tint Overlay

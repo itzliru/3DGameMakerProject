@@ -1,7 +1,8 @@
 /// cube_load(filename)
-var _filename = argument0;
+function cube_load(_filename) {
+    if (is_undefined(_filename) || _filename == undefined || _filename == "") _filename = "cubes.json";
 
-if (file_exists(_filename)) {
+    if (file_exists(_filename)) {
     var file = file_text_open_read(_filename);
     var data = "";
     while (!file_text_eof(file)) {
@@ -12,9 +13,16 @@ if (file_exists(_filename)) {
 
     var parsed = json_decode(data);
 
+    // Accept either a struct with `cubes` or a ds_map with key "cubes"
+    var in_list = undefined;
     if (is_struct(parsed) && variable_struct_exists(parsed, "cubes")) {
+        in_list = parsed.cubes;
+    } else if (is_real(parsed) && ds_map_exists(parsed, "cubes")) {
+        in_list = ds_map_find_value(parsed, "cubes");
+    }
+
+    if (in_list != undefined) {
         // Validate and normalise loaded cubes to avoid runtime errors
-        var in_list = parsed.cubes;
         var out_list = [];
         var dropped = 0;
         for (var i = 0; i < array_length(in_list); i++) {
@@ -45,4 +53,5 @@ if (file_exists(_filename)) {
     }
 
     show_debug_message("Cubes loaded from " + string(_filename));
+}
 }

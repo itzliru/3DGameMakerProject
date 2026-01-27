@@ -2,7 +2,7 @@
 /// --- BuilderController Create Event (Drago3D safe) ---
 
 // Debug and editing flags
-global.debug_mode       = false;
+global.debug_mode       = true;
 global.editing_block    = false;
 
 // Grid and cube defaults

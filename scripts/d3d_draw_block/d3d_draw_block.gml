@@ -14,6 +14,17 @@
 function d3d_draw_block(x1, y1, z1, x2, y2, z2, tex = -1, hrepeat = 1, vrepeat = 1, c = draw_get_colour(), a = draw_get_alpha()) {
     static vertex = Drago3D_Internals.Vertex;
     static format = Drago3D_Internals.format;
+
+    // Accept either a texture pointer or a sprite index for `tex`.
+    // If a sprite index was passed accidentally, convert it to the texture pointer.
+    if (tex != -1) {
+        // Only call sprite_exists if the value is numeric (sprite indices are numbers; texture pointers are not numbers)
+        if (is_real(tex) && sprite_exists(tex)) {
+            var _orig_tex = tex;
+            tex = sprite_get_texture(tex, 0);
+            if (global.debug_mode) show_debug_message("[DX] d3d_draw_block: converted sprite index " + string(_orig_tex) + " -> texture " + string(tex));
+        }
+    }
     
     static cache = { };
     static archive = ds_priority_create();

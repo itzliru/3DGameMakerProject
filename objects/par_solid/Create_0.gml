@@ -14,4 +14,3 @@ if (sprite_exists(spr_blockOther)) {
 
 // Create a new model and store its ID
 
-

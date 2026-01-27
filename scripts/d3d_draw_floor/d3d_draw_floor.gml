@@ -14,6 +14,15 @@
 function d3d_draw_floor(x1, y1, z1, x2, y2, z2, tex = -1, hrepeat = 1, vrepeat = 1, c = draw_get_colour(), a = draw_get_alpha()) {
     static vertex = Drago3D_Internals.Vertex;
     static format = Drago3D_Internals.format;
+
+    // Accept a sprite index as `tex` and convert it to a texture pointer when necessary
+    if (tex != -1) {
+        if (is_real(tex) && sprite_exists(tex)) {
+            var _orig = tex;
+            tex = sprite_get_texture(tex, 0);
+            if (global.debug_mode) show_debug_message("[DX] d3d_draw_floor: converted sprite index " + string(_orig) + " -> texture " + string(tex));
+        }
+    }
     
     static cache = { };
     static archive = ds_priority_create();

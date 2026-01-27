@@ -75,6 +75,15 @@ function d3d_draw_block_simple(x1, y1, z1, x2, y2, z2, tex = -1) {
     var current = matrix_get(matrix_world);
     matrix_set(matrix_world, matrix_multiply(transform, current));
     
+    // Accept sprite index as `tex` and convert if required
+    if (tex != -1) {
+        if (is_real(tex) && sprite_exists(tex)) {
+            var _orig = tex;
+            tex = sprite_get_texture(tex, 0);
+            if (global.debug_mode) show_debug_message("[DX] d3d_draw_block_simple: converted sprite index " + string(_orig) + " -> texture " + string(tex));
+        }
+    }
+
     vertex_submit(vb, pr_trianglelist, tex);
     
     matrix_set(matrix_world, current);

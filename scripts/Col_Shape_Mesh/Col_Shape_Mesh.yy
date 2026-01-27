@@ -1,12 +1,12 @@
 {
   "$GMScript":"",
-  "%Name":"scr_draw_billboard_simple",
+  "%Name":"Col_Shape_Mesh",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_draw_billboard_simple",
+  "name":"Col_Shape_Mesh",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"OpenworldRPG3Dv1",
+    "path":"OpenworldRPG3Dv1.yyp",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

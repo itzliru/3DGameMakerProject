@@ -11,11 +11,8 @@ var t = (global.day_length > 0) ? (global.world_time / global.day_length) : 0;
 var light_value = 0.2 + 0.8 * (0.5 + 0.5 * sin(t * pi * 2));
 var brightness = clamp(light_value, 0.2, 1);
 
-// Sky tint and fog (safe defaults already in globals)
-draw_set_alpha(0.25);
-draw_set_color(global.ambient_light);
-draw_rectangle(0, 0, display_get_width(), display_get_height(), false);
-draw_set_alpha(1);
+// Sky tint (fog overlay removed to avoid obscuring 3D draws)
+// Previously drew a semi-transparent fog rectangle here; removed per request.
 
 // --- Debug overlay ---
 if (global.debug_mode) {

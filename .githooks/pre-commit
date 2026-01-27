@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Optional pre-commit hook (not automatically installed). To enable:
+#   git config core.hooksPath .githooks
+
+python tools/gml_reflection_lint.py
+RC=$?
+if [ $RC -ne 0 ]; then
+  echo "GML reflection lint failed — fix issues before committing." >&2
+  exit $RC
+fi
+exit 0

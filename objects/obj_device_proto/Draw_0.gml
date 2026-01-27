@@ -2,13 +2,11 @@
 // You can write your code in this editor
 /// obj_device_proto Draw Event
 
-// Draw the sprite in 3D world
+// Draw sprite as screen-projected overlay (billboarding removed)
 if (!held) {
-    // Use the billboard dispatcher (deterministic; will fall back safely)
-    if (asset_get_index("scr_draw_billboard") != -1 || asset_get_index("scr_draw_billboard_simple") != -1) {
-        scr_draw_billboard(sprite_index, x, y, z, 1, 1);
-    }
-}
+    var p = (asset_get_index("scr_world_to_screen") != -1) ? scr_world_to_screen(x,y,z) : [x,y,1,true];
+    if (p[3] && sprite_exists(sprite_index)) draw_sprite_ext(sprite_index, 0, p[0], p[1], 1, 1, 0, c_white, 1);
+} 
 var tex = sprite_get_texture(sprite_index, 0);
 d3d_draw_block(
     x - 8, y - 8, z,     // bottom corner
@@ -18,13 +16,15 @@ d3d_draw_block(
 
 // Draw device screen
 if (surface_exists(device_screen)) {
-    surface_set_target(device_screen);
+    if (global.debug_mode) show_debug_message("[SURF] set target: device_screen (inst=" + string(id) + ") from obj_device_proto");
+    scr_safe_surface_set_target(device_screen);
     draw_clear_alpha(c_black, 0);
 
     // Dynamic feedback (example)
     draw_text(2, 2, "Status: OK");
 
     surface_reset_target();
+    show_debug_message("[SURF] reset target: device_screen (inst=" + string(id) + ") from obj_device_proto");
 
     // Draw the mini-screen as overlay if held
    // if (held) {

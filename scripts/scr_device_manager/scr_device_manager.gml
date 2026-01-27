@@ -93,7 +93,7 @@ function next_device() {
     if (array_length(inv) == 0) return;
 
     // Clean invalid entries before cycling
-    scr_device_manager.cleanup_inventory();
+    cleanup_inventory();
 
     // Drop current
     if (variable_global_exists("held_device") && global.held_device != noone && instance_exists(global.held_device)) drop_device(global.held_device);
@@ -122,7 +122,7 @@ function prev_device() {
     if (array_length(inv) == 0) return;
 
     // Clean invalid entries before cycling
-    scr_device_manager.cleanup_inventory();
+    cleanup_inventory();
 
     if (variable_global_exists("held_device") && global.held_device != noone && instance_exists(global.held_device)) drop_device(global.held_device);
 
@@ -146,14 +146,16 @@ function prev_device() {
 function update_screen(dev_inst) {
     if (!surface_exists(dev_inst.device_screen)) return;
 
-    surface_set_target(dev_inst.device_screen);
+    if (global.debug_mode) show_debug_message("[SURF] set target: device_screen (id=" + string(dev_inst) + ")");
+    scr_safe_surface_set_target(dev_inst.device_screen);
     draw_clear_alpha(c_black, 0);
 
     // Example dynamic content
     draw_text(2, 2, "Type: " + dev_inst.device_type);
     draw_text(2, 12, "Battery: " + string(dev_inst.battery) + "%");
 
-    surface_reset_target();
+    scr_surface_reset_target();
+    if (global.debug_mode) show_debug_message("[SURF] reset target: device_screen (id=" + string(dev_inst) + ")");
 }
 
 

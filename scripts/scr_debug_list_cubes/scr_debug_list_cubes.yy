@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"scr_debug_list_cubes",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_debug_list_cubes",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

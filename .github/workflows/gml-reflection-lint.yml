@@ -1,0 +1,24 @@
+name: GML reflection lint
+
+on:
+  push:
+    paths:
+      - '**/*.gml'
+      - '**/*.yy'
+  pull_request:
+    paths:
+      - '**/*.gml'
+      - '**/*.yy'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Run GML reflection lint
+        run: |
+          python tools/gml_reflection_lint.py

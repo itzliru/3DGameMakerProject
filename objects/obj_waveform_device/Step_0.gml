@@ -6,7 +6,7 @@ if (!held_by_player) {
     if (ply != noone) {
         var d3 = point_distance_3d(x, y, z, ply.x, ply.y, ply.z);
         if (d3 <= 48) {
-            if (script_exists(add_device)) {
+            if (is_callable(add_device)) {
                 if (add_device(id, ply)) {
                     if (asset_get_index("snd_pickup") != -1) audio_play_sound(snd_pickup, 1, false);
                     instance_destroy();

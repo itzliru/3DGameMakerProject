@@ -5,12 +5,17 @@
 
 function place_meeting_ext(xx, yy, zz, obj, w, h, d, buffer) {
     with (obj) {
+        // Prefer instance-specific extents when available (e.g., par_solid floor created with width/length/height)
+        var bw = (variable_instance_exists(id, "width") ? width : 64);
+        var bl = (variable_instance_exists(id, "length") ? length : 64);
+        var bh = (variable_instance_exists(id, "height") ? height : 64);
+
         var left   = x + buffer;
-        var right  = x + 64 - buffer;
+        var right  = x + bw - buffer;
         var front  = y + buffer;
-        var back   = y + 64 - buffer;
+        var back   = y + bl - buffer;
         var bottom = z + buffer;
-        var top    = z + 64 - buffer;
+        var top    = z + bh - buffer;
 
         // Check AABB collision between two boxes
         if (!(xx + w <= left ||      // Player is completely left

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"scr_compute_ground_from_grid",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_compute_ground_from_grid",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

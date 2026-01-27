@@ -6,7 +6,7 @@ var wy = argument1;
 var wz = argument2;
 
 // Prefer using the GPU/view/projection matrices when available for exact results
-if (function_exists(matrix_get) && variable_global_exists("fov")) {
+if (variable_global_exists("fov")) {
     // Try to use the combined world-view-projection matrix
     var m = undefined;
     // matrix_world_view_projection constant should be available in modern runtimes

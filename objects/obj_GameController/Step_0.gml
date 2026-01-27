@@ -71,9 +71,6 @@ else { // Dusk → Midnight
 }
 
 // ==============================
-// Fog (distance-based fade)
+// Fog support removed
 // ==============================
-// Make fog stronger at night
-var fog_strength = 1 - brightness; // 0 at noon, 0.8 at night
-global.fog_color = merge_color(global.sky_color, c_black, fog_strength);
-global.fog_density = 0.001 + (fog_strength * 0.004);
+// Fog was removed project-wide to avoid postprocess interference. If you need distance fog later, reintroduce controlled logic with explicit assets and toggles.

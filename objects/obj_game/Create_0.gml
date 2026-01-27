@@ -22,3 +22,114 @@ global._snap_initialized = true;
 
 // Preserve existing minimal behavior
 global.paused = false;
+
+// Ensure there is a ground floor par_solid instance in the room so non-cube floors are detected
+if (asset_get_index("par_solid") != -1) {
+    // Create a single large floor instance if none exists
+    if (!instance_exists(par_solid)) {
+        // Determine sensible coverage for the fallback floor.
+        var centerx = 0; var centery = 0; var fw = 0; var fl = 0;
+        if (typeof(room_width) == "real") {
+            fw = max(256, room_width);
+            fl = max(256, room_height);
+            centerx = room_width * 0.5;
+            centery = room_height * 0.5;
+        } else if (variable_global_exists("room_width") && variable_global_exists("room_height")) {
+            fw = max(256, global.room_width);
+            fl = max(256, global.room_height);
+            centerx = global.room_width * 0.5;
+            centery = global.room_height * 0.5;
+        } else if (variable_global_exists("cube_list") && array_length(global.cube_list) > 0) {
+            // Defensive: initialize bounds explicitly (avoid scientific notation and multi-assignment syntax)
+            var minx = 1000000000;
+            var maxx = -1000000000;
+            var miny = 1000000000;
+            var maxy = -1000000000;
+            for (var i = 0; i < array_length(global.cube_list); i++) {
+                var c = global.cube_list[i];
+                minx = min(minx, c.x);
+                maxx = max(maxx, c.x + c.size);
+                miny = min(miny, c.y);
+                maxy = max(maxy, c.y + c.size);
+            }
+            fw = max(256, maxx - minx + (variable_global_exists("grid_size") ? global.grid_size : 64));
+            fl = max(256, maxy - miny + (variable_global_exists("grid_size") ? global.grid_size : 64));
+            centerx = (minx + maxx) * 0.5;
+            centery = (miny + maxy) * 0.5;
+        } else if (instance_exists(obj_player)) {
+            var p = instance_find(obj_player, 0);
+            centerx = p.x; centery = p.y;
+            fw = max(512, display_get_width());
+            fl = max(512, display_get_height());
+        } else {
+            fw = max(256, display_get_width());
+            fl = max(256, display_get_height());
+            centerx = fw * 0.5; centery = fl * 0.5;
+        }
+
+        var f = noone;
+        // Try to create in named layer if available, otherwise fall back to depth-based creation for compatibility
+        try {
+            if (layer_get_id("Instances") != -1) {
+                f = instance_create_layer(centerx, centery, "Instances", par_solid);
+            } else {
+                f = instance_create_depth(centerx, centery, 0, par_solid);
+            }
+        } catch (e) {
+            // Fallback: depth creation
+            f = instance_create_depth(centerx, centery, 0, par_solid);
+        }
+        if (f != noone) {
+            f.x = centerx; f.y = centery; f.z = (variable_global_exists("ground_level") ? global.ground_level : 0);
+            f.width = fw; f.length = fl; f.height = 1;
+            // Register created fallback floor for direct diagnostics
+            global.fallback_floor = f;
+        }
+    }
+} else {
+    // If par_solid asset doesn't exist, ensure the global ground plane remains the authoritative fallback
+}
+
+// Ensure runtime window size matches requested globals (helps when IDE options are missing)
+if (variable_global_exists("window_width") && variable_global_exists("window_height")) {
+    try {
+        // Clamp to display size to avoid OS clamping/overflow
+        var targ_w = min(global.window_width, display_get_width());
+        var targ_h = min(global.window_height, display_get_height());
+        window_set_size(targ_w, targ_h);
+        if (global.debug_mode) show_debug_message("[WINDOW] window_set_size -> " + string(targ_w) + "x" + string(targ_h) + " (requested " + string(global.window_width) + "x" + string(global.window_height) + ")");
+        // Try to explicitly set the window position to the top-left of the primary display — helps in IDE/hosted runners that position windows oddly
+        try {
+            window_set_position(0, 0);
+            if (global.debug_mode) show_debug_message("[WINDOW] window_set_position -> " + string(window_get_x()) + "," + string(window_get_y()));
+        } catch (e_pos) {
+            if (global.debug_mode) show_debug_message("[WINDOW] window_set_position threw: " + string(e_pos));
+        }
+    } catch (e) {
+        if (global.debug_mode) show_debug_message("[WINDOW] window_set_size threw: " + string(e));
+    }
+
+    // If requested, force a fullscreen/borderless presentation (safe checks)
+    if (variable_global_exists("force_fullscreen") && global.force_fullscreen) {
+        try {
+            if (!is_undefined(window_set_fullscreen)) {
+                window_set_fullscreen(true);
+                if (global.debug_mode) show_debug_message("[WINDOW] force_fullscreen: window_set_fullscreen(true) invoked");
+            } else if (!is_undefined(window_set_borderless)) {
+                window_set_borderless(true);
+                window_set_position(0, 0);
+                if (global.debug_mode) show_debug_message("[WINDOW] force_fullscreen: window_set_borderless(true) invoked");
+            } else {
+                if (global.debug_mode) show_debug_message("[WINDOW] force_fullscreen: no fullscreen API available");
+            }
+        } catch (e_fs) {
+            if (global.debug_mode) show_debug_message("[WINDOW] force_fullscreen threw: " + string(e_fs));
+        }
+    }
+    // Window enforcement disabled — was causing strange offsets in some environments.
+
+    // Allow the player to toggle borderless/fullscreen (F11) at runtime to test whether a borderless fullscreen presentation removes the black bar
+    if (!variable_global_exists("_window_borderless_test")) global._window_borderless_test = false;
+}
+
+

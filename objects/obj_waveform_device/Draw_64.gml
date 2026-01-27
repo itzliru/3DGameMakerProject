@@ -14,7 +14,8 @@ if (!surface_exists(device_surface)) {
 }
 
 
-    surface_set_target(device_surface);
+    if (global.debug_mode) show_debug_message("[SURF] set target: device_surface (inst=" + string(id) + ")");
+    scr_safe_surface_set_target(device_surface);
     draw_clear_alpha(c_black, 0); // clear previous waveform
 
     // --- Draw sprite-based waveform (circular buffer) ---
@@ -25,7 +26,8 @@ if (!surface_exists(device_surface)) {
         draw_sprite_part(spr_wavebar, frame, 0, 0, bar_width, screen_h, i * bar_width, 0);
     }
 
-    surface_reset_target();
+    scr_surface_reset_target();
+    if (global.debug_mode) show_debug_message("[SURF] reset target: device_surface (inst=" + string(id) + ")");
 
     // Draw the waveform surface inside the device screen rectangle
     draw_surface(device_surface, hud_x + screen_offset_x, hud_y + screen_offset_y);

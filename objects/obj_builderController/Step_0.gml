@@ -49,8 +49,15 @@ if (global.editing_block) {
         global.ghost_y = _snap[1];
         global.ghost_z = _snap[2];
 
-        // Check if placement collides
-        global.ghost_blocked = cube_collision_check(global.ghost_x, global.ghost_y, global.ghost_z, global.block_size, global.block_size, global.block_size, par_solid, 0);
+
+        // Check if placement collides (use safe invoke helper)
+        var _gb = false;
+        try {
+            _gb = cube_collision_check(global.ghost_x, global.ghost_y, global.ghost_z, global.block_size, global.block_size, global.block_size, par_solid, 0);
+        } catch (e) {
+            _gb = false;
+        }
+        global.ghost_blocked = _gb;
     }
 }
 

@@ -7,7 +7,7 @@ if (p != noone && !held_by_player) {
     if (d3 <= pickup_radius) {
         // Prefer device manager API if present
         var added = false;
-        if (script_exists(add_device)) {
+        if (is_callable(add_device)) {
             added = add_device(id, p); // add_device handles globals and returns bool
         }
         if (!added) {

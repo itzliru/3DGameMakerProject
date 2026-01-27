@@ -15,7 +15,7 @@ global.player_position      = [0, 0, 0]; // XYZ coords
 // World & Environment
 // ==============================
 
-global.gravity          = -0.3;
+global.basegravZ        = -0.3;
 global.world_time       = 0;
 global.day_length       = 6000;   // ticks for a full cycle
 global.fov              = 70;    // Field of View (3D camera)
