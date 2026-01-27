@@ -7,6 +7,11 @@ if (!variable_global_exists("current_z")) global.current_z = 0;
 if (!variable_global_exists("debug_mode")) global.debug_mode = true;
 if (!variable_global_exists("block_id")) global.block_id = 0;
 if (!variable_global_exists("cube_list")) global.cube_list = [];
+global.screen_w ??= display_get_width();
+global.screen_h ??= display_get_height();
+
+global.protoScreenW ??= 64;
+global.protoScreenH ??= 48;
 
 // Provide a guaranteed safe snap_to_grid implementation early so callers never crash
 // (unconditional assignment avoids init-order/read-safety issues)
@@ -22,6 +27,83 @@ global._snap_initialized = true;
 
 // Preserve existing minimal behavior
 global.paused = false;
+
+// --- Inventory manager (simple global storage + API) ---
+if (!variable_global_exists("inventory")) global.inventory = [];
+
+// Low-level inventory operations (operate on global.inventory array)
+global.inventory_add = function(device_id, owner) {
+    if (is_undefined(device_id)) return false;
+    // prevent duplicates
+    for (var i = 0; i < array_length(global.inventory); i++) {
+        if (global.inventory[i].id == device_id) return false;
+    }
+    var entry = { id: device_id, owner: owner };
+    global.inventory[array_length(global.inventory)] = entry;
+    return true;
+};
+global.device_is_held = function(_inst) {
+    if (variable_instance_exists(_inst, "held") && _inst.held) return true;
+    if (variable_instance_exists(_inst, "held_by_player") && _inst.held_by_player) return true;
+    if (variable_global_exists("inventory_has") && global.inventory_has(_inst)) return true;
+    return false;
+}
+
+global.inventory_remove = function(device_id) {
+    var found = false;
+    var newarr = [];
+    for (var i = 0; i < array_length(global.inventory); i++) {
+        var e = global.inventory[i];
+        if (e.id == device_id) { found = true; continue; }
+        newarr[array_length(newarr)] = e;
+    }
+    global.inventory = newarr;
+    return found;
+};
+
+global.inventory_has = function(device_id) {
+    for (var i = 0; i < array_length(global.inventory); i++) {
+        if (global.inventory[i].id == device_id) return true;
+    }
+    return false;
+};
+
+global.inventory_list = function() {
+    return global.inventory;
+};
+
+// Expose convenient script-level wrappers expected by other objects
+global.add_device = function(device_id, owner) {
+    if (is_undefined(device_id)) return false;
+    if (global.inventory_has(device_id)) return false;
+    var ok = global.inventory_add(device_id, owner);
+    // If adding succeeded and instance exists, mark it held and attach player ref
+    if (ok && instance_exists(device_id)) {
+        var d = device_id;
+        // Support both naming conventions used by different device prototypes
+        d.held_by_player = true;
+        d.held = true;
+        d.player_ref = owner;
+    }
+    return ok;
+}
+
+global.invoke_Inst = function(_inst, _name, _default) {
+    return variable_instance_exists(_inst, _name)
+        ? variable_instance_get(_inst, _name)
+        : _default;
+}
+
+global.remove_device = function(device_id) {
+    var ok = global.inventory_remove(device_id);
+    if (ok && instance_exists(device_id)) {
+        var d = device_id;
+        d.held_by_player = false;
+        d.held = false;
+        d.player_ref = noone;
+    }
+    return ok;
+}
 
 // Ensure there is a ground floor par_solid instance in the room so non-cube floors are detected
 if (asset_get_index("par_solid") != -1) {

@@ -112,6 +112,7 @@
     {"id":{"name":"scr_debug_draw_par_solid","path":"scripts/scr_debug_draw_par_solid/scr_debug_draw_par_solid.yy",},},
     {"id":{"name":"scr_debug_list_cubes","path":"scripts/scr_debug_list_cubes/scr_debug_list_cubes.yy",},},
     {"id":{"name":"scr_device_manager","path":"scripts/scr_device_manager/scr_device_manager.yy",},},
+    {"id":{"name":"scr_safe_surface_set_target","path":"scripts/scr_safe_surface_set_target/scr_safe_surface_set_target.yy",},},
     {"id":{"name":"scr_find_ground_height_at","path":"scripts/scr_find_ground_height_at/scr_find_ground_height_at.yy",},},
     {"id":{"name":"scr_find_overlapping_par_solid","path":"scripts/scr_find_overlapping_par_solid/scr_find_overlapping_par_solid.yy",},},
     {"id":{"name":"scr_jump_grace_check","path":"scripts/scr_jump_grace_check/scr_jump_grace_check.yy",},},

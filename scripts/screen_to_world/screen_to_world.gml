@@ -19,7 +19,7 @@ function screen_to_world(argument0, argument1, argument2, argument3) {
     var _y = argument1;
     var V = argument2;
     var P = argument3;
-
+//this is not the correct cononical projection matrix for this project see scr_world_to_screen for correct version
     var mx = 2 * (_x / window_get_width() - .5) / P[0];
     var my = 2 * (_y / window_get_height() - .5) / P[5];
     var camX = - (V[12] * V[0] + V[13] * V[1] + V[14] * V[2]);
