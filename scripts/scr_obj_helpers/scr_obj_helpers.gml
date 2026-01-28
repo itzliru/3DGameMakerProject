@@ -297,12 +297,12 @@ function import_obj(_filename, _vertex_format)
 /// Returns a struct: { instances: [...], col_objects: [...], mesh: <import_obj return> }
 function import_map(_filename, _opts) {
     if (argument_count == 0) return undefined;
-    var opts = (argument_count > 1 && !is_undefined(argument1)) ? argument1 : {};
+    var opts = !is_undefined(_opts) ? _opts : {};
     var create_par = (is_struct(opts) && !is_undefined(opts.create_par_solid)) ? opts.create_par_solid : true;
     var use_colworld = (is_struct(opts) && !is_undefined(opts.use_colworld)) ? opts.use_colworld : true;
     var detailed = (is_struct(opts) && !is_undefined(opts.detailed_collision)) ? opts.detailed_collision : false;
     var layer_name = (is_struct(opts) && !is_undefined(opts.layer)) ? opts.layer : "Instances_1";
-    var depth = (is_struct(opts) && !is_undefined(opts.depth)) ? opts.depth : 0;
+    var zdepth = (is_struct(opts) && !is_undefined(opts.depth)) ? opts.depth : 0;
 
     // Read file and parse minimal geometry (positions + faces). We duplicate a tiny amount of import_obj parsing
     var buffer = buffer_load(_filename);
@@ -391,9 +391,9 @@ function import_map(_filename, _opts) {
         var inst = noone;
         try {
             if (!is_undefined(layer_get_id) && layer_get_id(layer_name) != -1) inst = instance_create_layer(cx, cy, layer_name, par_solid);
-            else inst = instance_create_depth(cx, cy, depth, par_solid);
+            else inst = instance_create_depth(cx, cy, zdepth, par_solid);
         } catch (e) {
-            inst = instance_create_depth(cx, cy, depth, par_solid);
+            inst = instance_create_depth(cx, cy, zdepth, par_solid);
         }
         if (inst != noone) {
             inst.x = cx; inst.y = cy; inst.z = cz;
@@ -460,12 +460,12 @@ function import_map(_filename, _opts) {
 
 function import_map_safe(_filename, _opts) {
     if (argument_count == 0) return undefined;
-    var opts = (argument_count > 1 && !is_undefined(argument1)) ? argument1 : {};
+    var opts = !is_undefined(_opts) ? _opts : {};
     var create_par = (is_struct(opts) && !is_undefined(opts.create_par_solid)) ? opts.create_par_solid : true;
     var use_colworld = (is_struct(opts) && !is_undefined(opts.use_colworld)) ? opts.use_colworld : true;
     var detailed = (is_struct(opts) && !is_undefined(opts.detailed_collision)) ? opts.detailed_collision : false;
     var layer_name = (is_struct(opts) && !is_undefined(opts.layer)) ? opts.layer : "Instances_1";
-    var depth = (is_struct(opts) && !is_undefined(opts.depth)) ? opts.depth : 0;
+    var zdepth = (is_struct(opts) && !is_undefined(opts.depth)) ? opts.depth : 0;
     var rollback_on_failure = (is_struct(opts) && !is_undefined(opts.rollback_on_failure)) ? opts.rollback_on_failure : false;
 
     var errors = [];
@@ -599,9 +599,9 @@ function import_map_safe(_filename, _opts) {
         var inst = noone;
         try {
             if (!is_undefined(layer_get_id) && layer_get_id(layer_name) != -1) inst = instance_create_layer(cx, cy, layer_name, par_solid);
-            else inst = instance_create_depth(cx, cy, depth, par_solid);
+            else inst = instance_create_depth(cx, cy, zdepth, par_solid);
         } catch (e) {
-            inst = instance_create_depth(cx, cy, depth, par_solid);
+            inst = instance_create_depth(cx, cy, zdepth, par_solid);
         }
         if (inst != noone) {
             inst.x = cx; inst.y = cy; inst.z = cz;
@@ -624,34 +624,41 @@ function import_map_safe(_filename, _opts) {
     var add_to_colworld_ok = true;
     if (use_colworld && variable_global_exists("col_world") && !is_undefined(global.col_world)) {
         var shape = undefined;
-        try {
+        // Build detailed mesh if requested and supported, otherwise fall back to AABB
+        if (detailed && array_length(faces) > 0 && is_callable(ColMesh)) {
+            try {
                 var triangle_array = [];
                 for (var i = 0; i < array_length(faces); ++i) {
                     var f = faces[i];
-                    var p1 = positions[f[0] - 1];
-                    var p2 = positions[f[1] - 1];
-                    var p3 = positions[f[2] - 1];
-                    // validate again
-                    if (p1 == undefined || p2 == undefined || p3 == undefined) {
-                        array_push(errors, "Skipping triangle with missing vertex");
-                        continue;
-                    }
+                    var vi1 = (f[0] < 0) ? array_length(positions) + f[0] : (f[0] - 1);
+                    var vi2 = (f[1] < 0) ? array_length(positions) + f[1] : (f[1] - 1);
+                    var vi3 = (f[2] < 0) ? array_length(positions) + f[2] : (f[2] - 1);
+                    var p1 = positions[vi1];
+                    var p2 = positions[vi2];
+                    var p3 = positions[vi3];
+                    if (p1 == undefined || p2 == undefined || p3 == undefined) { array_push(errors, "Skipping triangle with missing vertex"); continue; }
                     array_push(triangle_array, new ColTriangle(new Vector3(p1[0], p1[1], p1[2]), new Vector3(p2[0], p2[1], p2[2]), new Vector3(p3[0], p3[1], p3[2])));
                 }
                 if (array_length(triangle_array) > 0) {
                     shape = new ColMesh(triangle_array);
                 } else {
-                    // fallback to AABB if no valid triangles
                     var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
                     var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
                     shape = new ColAABB(center_v, half);
                 }
-            } else {
+            } catch (e) {
+                array_push(errors, "ColMesh build failed: " + string(e));
                 var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
                 var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
                 shape = new ColAABB(center_v, half);
             }
+        } else {
+            var center_v = new Vector3((aabb_min[0] + aabb_max[0]) * 0.5, (aabb_min[1] + aabb_max[1]) * 0.5, (aabb_min[2] + aabb_max[2]) * 0.5);
+            var half = new Vector3(max(0.5, (aabb_max[0] - aabb_min[0]) * 0.5), max(0.5, (aabb_max[1] - aabb_min[1]) * 0.5), max(0.5, (aabb_max[2] - aabb_min[2]) * 0.5));
+            shape = new ColAABB(center_v, half);
+        }
 
+        try {
             var colobj = new ColObject(shape, _filename);
             global.col_world.Add(colobj);
             array_push(created_colobjects, colobj);
@@ -685,7 +692,6 @@ function import_map_safe(_filename, _opts) {
 
     return { instances: created_instances, col_objects: created_colobjects, mesh: mesh, aabb_min: aabb_min, aabb_max: aabb_max, errors: errors };
 }
-
 /*
 function invoke(){
     // Flexible invoker:
@@ -753,4 +759,4 @@ function invoke(){
         }
     }
 }
-/*
+*/
