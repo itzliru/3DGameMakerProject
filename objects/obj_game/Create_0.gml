@@ -7,11 +7,11 @@ if (!variable_global_exists("current_z")) global.current_z = 0;
 if (!variable_global_exists("debug_mode")) global.debug_mode = true;
 if (!variable_global_exists("block_id")) global.block_id = 0;
 if (!variable_global_exists("cube_list")) global.cube_list = [];
-global.screen_w ??= display_get_width();
-global.screen_h ??= display_get_height();
+if (!variable_global_exists("screen_w")) global.screen_w = display_get_width();
+if (!variable_global_exists("screen_h")) global.screen_h = display_get_height();
 
-global.protoScreenW ??= 64;
-global.protoScreenH ??= 48;
+if (!variable_global_exists("protoScreenW")) global.protoScreenW = 64;
+if (!variable_global_exists("protoScreenH")) global.protoScreenH = 48;
 
 // Provide a guaranteed safe snap_to_grid implementation early so callers never crash
 // (unconditional assignment avoids init-order/read-safety issues)

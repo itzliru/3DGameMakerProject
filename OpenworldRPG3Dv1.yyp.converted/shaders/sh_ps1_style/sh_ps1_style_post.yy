@@ -1,0 +1,14 @@
+{
+  "$GMShader": "",
+  "%Name": "sh_ps1_style_post",
+  "name": "sh_ps1_style_post",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type": 1,
+  "vertex": "sh_ps1_style_post.vsh",
+  "fragment": "sh_ps1_style.fsh"
+}

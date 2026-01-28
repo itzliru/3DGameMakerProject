@@ -1,0 +1,81 @@
+/// cube_collision_check(x, y, z, w, h, d, obj, buffer)
+/// Returns true if an AABB at (x,y,z) with size w,h,d overlaps any placed cube OR specified object instances.
+/// - obj (optional): object to test against (e.g., par_solid). If omitted, this will fallback to checking `par_solid` via `place_meeting_ext` if available.
+/// - buffer (optional): shrink amount passed to `place_meeting_ext`.
+function cube_collision_check(xx, yy, zz, ww, hh, dd, obj_check, pm_buffer) {
+    // provide safe defaults for omitted params
+    if (is_undefined(pm_buffer)) pm_buffer = 0;
+
+    // Basic argument validation: ensure we have numeric values to compare
+    var _gs_fallback = variable_global_exists("grid_size") ? global.grid_size : 64;
+    if (!is_real(xx)) {
+        if (is_string(xx) && string(xx) != "") xx = real(xx);
+    }
+    if (!is_real(yy)) {
+        if (is_string(yy) && string(yy) != "") yy = real(yy);
+    }
+    if (!is_real(zz)) {
+        if (is_string(zz) && string(zz) != "") zz = real(zz);
+    }
+    if (!is_real(ww)) {
+        if (is_string(ww) && string(ww) != "") ww = real(ww);
+        else ww = (variable_global_exists("block_size") ? global.block_size : _gs_fallback);
+    }
+    if (!is_real(hh)) hh = ww;
+    if (!is_real(dd)) dd = ww;
+
+// If any primary coordinate is still invalid, bail safely and log diagnostics
+if (!is_real(xx) || !is_real(yy) || !is_real(zz)) {
+    show_debug_message("[cube_collision_check] invalid args — x=" + string(xx) + " y=" + string(yy) + " z=" + string(zz) + " | using fallback grid_size=" + string(_gs_fallback));
+    return false;
+}
+
+// 1) Check against placed cube list (defensive)
+    if (variable_global_exists("cube_list")) {
+    for (var i = 0; i < array_length(global.cube_list); i++) {
+        var c = global.cube_list[i];
+
+        // Defensive: skip entries that are missing or malformed
+        if (!is_struct(c)) continue;
+        if (!variable_struct_exists(c, "x") || !variable_struct_exists(c, "y") || !variable_struct_exists(c, "z")) continue;
+
+        // Ensure numeric fields (coerce or skip)
+        var cx = is_real(c.x) ? c.x : (is_real(real(c.x)) ? real(c.x) : undefined);
+        var cy = is_real(c.y) ? c.y : (is_real(real(c.y)) ? real(c.y) : undefined);
+        var cz = is_real(c.z) ? c.z : (is_real(real(c.z)) ? real(c.z) : undefined);
+        var csize = (variable_struct_exists(c, "size") && is_real(c.size)) ? c.size : 0;
+        var ccoll = variable_struct_exists(c, "collision") ? c.collision : true;
+
+        if (cx == undefined || cy == undefined || cz == undefined) continue;
+        if (csize <= 0) continue; // invalid size
+        if (!ccoll) continue; // skip non-colliding blocks
+
+        var left   = cx;
+        var right  = cx + csize;
+        var front  = cy;
+        var back   = cy + csize;
+        var bottom = cz;
+        var top    = cz + csize;
+
+        // AABB overlap test
+        if (!(xx + ww <= left || xx >= right ||
+              yy + hh <= front || yy >= back ||
+              zz + dd <= bottom || zz >= top)) {
+            return true;
+        }
+    }
+}
+
+// 2) If requested or available, consult place_meeting_ext / object instances (e.g., par_solid)
+    if (is_undefined(obj_check) && asset_get_index("par_solid") != -1) obj_check = par_solid;
+    if (!is_undefined(obj_check)) {
+        // call the existing helper which checks all instances of obj_check (guard with try/catch for older runtimes)
+        try {
+            if (place_meeting_ext(xx, yy, zz, obj_check, ww, hh, dd, pm_buffer)) return true;
+        } catch (e) {
+            /* place_meeting_ext not available — skip geometry check */
+        }
+    }
+
+    return false;
+}

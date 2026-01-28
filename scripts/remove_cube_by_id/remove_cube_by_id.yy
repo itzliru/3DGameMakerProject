@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"remove_cube_by_id",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"remove_cube_by_id",
+  "parent":{
+    "name":"Debug",
+    "path":"folders/Scripts/Debug.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

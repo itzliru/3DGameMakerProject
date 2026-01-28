@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"draw_sprite_billboard",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"draw_sprite_billboard",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

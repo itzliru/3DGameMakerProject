@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"Col_World",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Col_World",
+  "parent":{
+    "name":"OpenworldRPG3Dv1",
+    "path":"OpenworldRPG3Dv1.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

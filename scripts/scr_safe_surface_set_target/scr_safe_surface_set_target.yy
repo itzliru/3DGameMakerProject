@@ -1,4 +1,3 @@
-```yy-config
 {
   "$GMScript":"",
   "%Name":"scr_safe_surface_set_target",
@@ -7,9 +6,8 @@
   "name":"scr_safe_surface_set_target",
   "parent":{
     "name":"globalInit",
-    "path":"folders/Scripts/globalInit.yy",
+    "path":"folders/Scripts/globalInit.yy"
   },
   "resourceType":"GMScript",
-  "resourceVersion":"2.0",
+  "resourceVersion":"2.0"
 }
-```

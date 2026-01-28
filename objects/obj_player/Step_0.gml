@@ -55,10 +55,14 @@ var y_vel = lengthdir_y(fb_vel, direction) + lengthdir_y(rl_vel, direction + 90)
 
 
 /// -------- Collision Handling --------
-var pw = 16;  // Player width
-var pd = 16;  // Player depth
+var pw = 16;  // Player width (full pixels)
+var pd = 16;  // Player depth (full pixels)
 var ph = 32;  // Player height
 var buf = -2;  // 2-pixel buffer
+
+// Precompute half-sizes to convert from centered player origin -> top-left for collision tests
+var _hpw = pw * 0.5;
+var _hpd = pd * 0.5;
 
 // Attempt overlap resolve (scriptized)
 scr_resolve_overlap(pw, pd, ph, buf);
@@ -66,20 +70,22 @@ scr_resolve_overlap(pw, pd, ph, buf);
 // X axis
 
 // X axis
-if (!place_meeting_ext(x + x_vel, y, z, par_solid, pw, pd, ph, buf)) {
+// X axis (convert player's center -> top-left for tests)
+if (!place_meeting_ext(x + x_vel - _hpw, y - _hpd, z, par_solid, pw, pd, ph, buf)) {
     x += x_vel;
 } else {
-    while (!place_meeting_ext(x + sign(x_vel), y, z, par_solid, pw, pd, ph, buf)) {
+    while (!place_meeting_ext(x + sign(x_vel) - _hpw, y - _hpd, z, par_solid, pw, pd, ph, buf)) {
         x += sign(x_vel);
     }
     x_vel = 0;
 }
 
 // Y axis
-if (!place_meeting_ext(x, y + y_vel, z, par_solid, pw, pd, ph, buf)) {
+// Y axis (convert player's center -> top-left for tests)
+if (!place_meeting_ext(x - _hpw, y + y_vel - _hpd, z, par_solid, pw, pd, ph, buf)) {
     y += y_vel;
 } else {
-    while (!place_meeting_ext(x, y + sign(y_vel), z, par_solid, pw, pd, ph, buf)) {
+    while (!place_meeting_ext(x - _hpw, y + sign(y_vel) - _hpd, z, par_solid, pw, pd, ph, buf)) {
         y += sign(y_vel);
     }
     y_vel = 0;

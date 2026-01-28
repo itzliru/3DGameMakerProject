@@ -5,11 +5,16 @@ function scr_resolve_overlap(_pw, _pd, _ph, _buf) {
     // Quick guards
     if (asset_get_index("place_meeting_ext") == -1) return false;
     if (instance_number(par_solid) == 0) return false;
-    if (!place_meeting_ext(x, y, z, par_solid, _pw, _pd, _ph, _buf)) return false;
+    // Adjust calling instance coords: this project uses centered player origin, so convert to top-left for tests
+    var __qx = x - _pw * 0.5;
+    var __qy = y - _pd * 0.5;
+    if (!place_meeting_ext(__qx, __qy, z, par_solid, _pw, _pd, _ph, _buf)) return false;
 
     var __tries = 0;
-    while (place_meeting_ext(x, y, z, par_solid, _pw, _pd, _ph, _buf) && __tries < 8) {
+    while (place_meeting_ext(__qx, __qy, z, par_solid, _pw, _pd, _ph, _buf) && __tries < 8) {
         z += 1;
+        __qx = x - _pw * 0.5;
+        __qy = y - _pd * 0.5;
         __tries += 1;
     }
 

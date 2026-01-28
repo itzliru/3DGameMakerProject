@@ -19,6 +19,22 @@ if (keyboard_check_pressed(ord("]"))) {
     global.show_collision = !global.show_collision;
 }
 
+// Screenshot hotkey (F12) — prefer script `scr_debug_take_screenshot`, fallback to global helper
+if (keyboard_check_pressed(vk_f12)) {
+    var out = noone;
+    if (asset_get_index("scr_debug_take_screenshot") != -1) {
+        try {
+            out = scr_debug_take_screenshot();
+        } catch (e) { out = noone; }
+    } else if (variable_global_exists("debug_take_screenshot")) {
+        try { out = global.debug_take_screenshot(); } catch (e) { out = noone; }
+    }
+    if (variable_global_exists("debug_mode") && global.debug_mode) {
+        if (out != noone) show_debug_message("[SCREEN] screenshot saved: " + string(out));
+        else show_debug_message("[SCREEN] screenshot failed");
+    }
+}
+
 // Example pause toggle
 if (keyboard_check_pressed(vk_escape)) {
     global.is_paused = !global.is_paused;

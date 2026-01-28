@@ -72,10 +72,10 @@ if (!variable_global_exists("debug_disable_postprocess")) global.debug_disable_p
 
 // Render scaling / pseudo-resolution (safe defaults)
 // Render at a low internal resolution and stretch to the window for a PS1-style look.
-if (!variable_global_exists("render_width")) global.render_width = 1920;
-if (!variable_global_exists("render_height")) global.render_height = 1080;
-if (!variable_global_exists("window_width")) global.window_width = 1920;
-if (!variable_global_exists("window_height")) global.window_height = 1080;
+if (!variable_global_exists("render_width")) global.render_width = 640;
+if (!variable_global_exists("render_height")) global.render_height = 480;
+if (!variable_global_exists("window_width")) global.window_width = 1080;
+if (!variable_global_exists("window_height")) global.window_height = 720;
 // Disable render scaling by default; set true only when intentionally using low-res render scaling
 if (!variable_global_exists("render_scale_enabled")) global.render_scale_enabled = false;
 // Development convenience: run fullscreen at native display resolution by default for now

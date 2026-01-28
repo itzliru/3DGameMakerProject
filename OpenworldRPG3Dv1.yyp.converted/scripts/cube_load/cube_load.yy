@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"cube_load",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"cube_load",
+  "parent":{
+    "name":"CubeHelperScripts",
+    "path":"folders/Scripts/CubeHelperScripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

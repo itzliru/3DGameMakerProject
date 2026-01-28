@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"scr_debug_take_screenshot",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_debug_take_screenshot",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
